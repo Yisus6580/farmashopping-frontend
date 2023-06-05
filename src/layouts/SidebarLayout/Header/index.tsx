@@ -1,23 +1,22 @@
 import { useContext } from 'react';
 
+import CloseTwoToneIcon from '@mui/icons-material/CloseTwoTone';
+import MenuTwoToneIcon from '@mui/icons-material/MenuTwoTone';
 import {
   Box,
-  alpha,
-  Stack,
-  lighten,
   Divider,
   IconButton,
+  Stack,
   Tooltip,
+  alpha,
+  lighten,
   styled,
   useTheme
 } from '@mui/material';
-import MenuTwoToneIcon from '@mui/icons-material/MenuTwoTone';
 import { SidebarContext } from 'src/contexts/SidebarContext';
-import CloseTwoToneIcon from '@mui/icons-material/CloseTwoTone';
 
-import HeaderButtons from './Buttons';
-import HeaderUserbox from './Userbox';
 import HeaderMenu from './Menu';
+import HeaderUserbox from './Userbox';
 
 const HeaderWrapper = styled(Box)(
   ({ theme }) => `
@@ -71,7 +70,6 @@ function Header() {
         <HeaderMenu />
       </Stack>
       <Box display="flex" alignItems="center">
-        <HeaderButtons />
         <HeaderUserbox />
         <Box
           component="span"

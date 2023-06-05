@@ -16,12 +16,13 @@ import {
   Typography
 } from '@mui/material';
 
-import InboxTwoToneIcon from '@mui/icons-material/InboxTwoTone';
-import { styled } from '@mui/material/styles';
-import ExpandMoreTwoToneIcon from '@mui/icons-material/ExpandMoreTwoTone';
 import AccountBoxTwoToneIcon from '@mui/icons-material/AccountBoxTwoTone';
-import LockOpenTwoToneIcon from '@mui/icons-material/LockOpenTwoTone';
 import AccountTreeTwoToneIcon from '@mui/icons-material/AccountTreeTwoTone';
+import ExpandMoreTwoToneIcon from '@mui/icons-material/ExpandMoreTwoTone';
+import LockOpenTwoToneIcon from '@mui/icons-material/LockOpenTwoTone';
+import { styled } from '@mui/material/styles';
+import { logout } from 'src/redux/auth/authSlice';
+import { useAppDispatch, useAppSelector } from 'src/redux/hook';
 
 const UserBoxButton = styled(Button)(
   ({ theme }) => `
@@ -59,14 +60,10 @@ const UserBoxDescription = styled(Typography)(
 );
 
 function HeaderUserbox() {
-  const user = {
-    name: 'Catherine Pike',
-    avatar: '/static/images/avatars/1.jpg',
-    jobtitle: 'Project Manager'
-  };
-
   const ref = useRef<any>(null);
   const [isOpen, setOpen] = useState<boolean>(false);
+  const { sessionData } = useAppSelector((state) => state.auth);
+  const dispatch = useAppDispatch();
 
   const handleOpen = (): void => {
     setOpen(true);
@@ -76,15 +73,23 @@ function HeaderUserbox() {
     setOpen(false);
   };
 
+  const handleLogout = () => {
+    dispatch(logout());
+  };
+
   return (
     <>
       <UserBoxButton color="secondary" ref={ref} onClick={handleOpen}>
-        <Avatar variant="rounded" alt={user.name} src={user.avatar} />
+        <Avatar
+          variant="rounded"
+          alt={`${sessionData.name} ${sessionData.lastName}`}
+          src={sessionData.imageUrl}
+        />
         <Hidden mdDown>
           <UserBoxText>
-            <UserBoxLabel variant="body1">{user.name}</UserBoxLabel>
+            <UserBoxLabel variant="body1">{`${sessionData.name} ${sessionData.lastName}`}</UserBoxLabel>
             <UserBoxDescription variant="body2">
-              {user.jobtitle}
+              {sessionData.role}
             </UserBoxDescription>
           </UserBoxText>
         </Hidden>
@@ -106,38 +111,34 @@ function HeaderUserbox() {
         }}
       >
         <MenuUserBox sx={{ minWidth: 210 }} display="flex">
-          <Avatar variant="rounded" alt={user.name} src={user.avatar} />
+          <Avatar
+            variant="rounded"
+            alt={`${sessionData.name} ${sessionData.lastName}`}
+            src={sessionData.imageUrl}
+          />
           <UserBoxText>
-            <UserBoxLabel variant="body1">{user.name}</UserBoxLabel>
+            <UserBoxLabel variant="body1">{`${sessionData.name} ${sessionData.lastName}`}</UserBoxLabel>
             <UserBoxDescription variant="body2">
-              {user.jobtitle}
+              {sessionData.role}
             </UserBoxDescription>
           </UserBoxText>
         </MenuUserBox>
         <Divider sx={{ mb: 0 }} />
         <List sx={{ p: 1 }} component="nav">
-          <ListItem button to="/management/profile/details" component={NavLink}>
+          <ListItem button to="/perfil" component={NavLink}>
             <AccountBoxTwoToneIcon fontSize="small" />
-            <ListItemText primary="My Profile" />
+            <ListItemText primary="Mi Perfil" />
           </ListItem>
-          <ListItem button to="/dashboards/messenger" component={NavLink}>
-            <InboxTwoToneIcon fontSize="small" />
-            <ListItemText primary="Messenger" />
-          </ListItem>
-          <ListItem
-            button
-            to="/management/profile/settings"
-            component={NavLink}
-          >
+          <ListItem button to="/configuraciones" component={NavLink}>
             <AccountTreeTwoToneIcon fontSize="small" />
-            <ListItemText primary="Account Settings" />
+            <ListItemText primary="Configuraciones" />
           </ListItem>
         </List>
         <Divider />
         <Box sx={{ m: 1 }}>
-          <Button color="primary" fullWidth>
+          <Button color="primary" onClick={handleLogout} fullWidth>
             <LockOpenTwoToneIcon sx={{ mr: 1 }} />
-            Sign out
+            Cerrar Sesión
           </Button>
         </Box>
       </Popover>

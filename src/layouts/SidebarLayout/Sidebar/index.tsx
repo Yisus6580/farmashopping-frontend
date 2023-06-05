@@ -12,11 +12,12 @@ import {
   Button,
   lighten,
   darken,
-  Tooltip
+  Tooltip,
+  Typography
 } from '@mui/material';
 
 import SidebarMenu from './SidebarMenu';
-import Logo from 'src/components/LogoSign';
+import Logo from 'src/assets/Logotipo.svg';
 
 const SidebarWrapper = styled(Box)(
   ({ theme }) => `
@@ -57,12 +58,12 @@ function Sidebar() {
         <Scrollbar>
           <Box mt={3}>
             <Box
-              mx={2}
+              mx="auto"
               sx={{
-                width: 52
+                width: 70
               }}
             >
-              <Logo />
+              <Box component="img" src={Logo} width={70} />
             </Box>
           </Box>
           <Divider
@@ -81,15 +82,13 @@ function Sidebar() {
         />
         <Box p={2}>
           <Button
-            href="https://bloomui.com"
-            target="_blank"
-            rel="noopener noreferrer"
+            onClick={() => console.log('hola')}
             variant="contained"
             color="warning"
             size="small"
             fullWidth
           >
-            Upgrade to PRO
+            Cerrar Sesión
           </Button>
         </Box>
       </SidebarWrapper>
@@ -114,12 +113,12 @@ function Sidebar() {
           <Scrollbar>
             <Box mt={3}>
               <Box
-                mx={2}
+                mx="auto"
                 sx={{
-                  width: 52
+                  width: 70
                 }}
               >
-                <Logo />
+                <Box component="img" src={Logo} width={70} />
               </Box>
             </Box>
             <Divider

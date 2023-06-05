@@ -1,11 +1,12 @@
 import { Suspense, lazy } from 'react';
-import { Navigate } from 'react-router-dom';
 import { RouteObject } from 'react-router';
+import { Navigate } from 'react-router-dom';
 
-import SidebarLayout from 'src/layouts/SidebarLayout';
 import BaseLayout from 'src/layouts/BaseLayout';
+import SidebarLayout from 'src/layouts/SidebarLayout';
 
 import SuspenseLoader from 'src/components/SuspenseLoader';
+import ProtectedRoute from './components/ProtectedRoute';
 
 const Loader = (Component) => (props) =>
   (
@@ -15,80 +16,115 @@ const Loader = (Component) => (props) =>
   );
 
 // Pages
-
-const Overview = Loader(lazy(() => import('src/content/overview')));
-
-// Dashboards
-
-const Crypto = Loader(lazy(() => import('src/content/dashboards/Crypto')));
-
-// Applications
-
-const Messenger = Loader(
-  lazy(() => import('src/content/applications/Messenger'))
+const Home = Loader(lazy(() => import('src/pages/Home')));
+const UserProfile = Loader(lazy(() => import('src/pages/User/Profile')));
+const UserSettings = Loader(lazy(() => import('src/pages/User/Settings')));
+const Login = Loader(lazy(() => import('src/pages/User/Login')));
+const Orders = Loader(lazy(() => import('src/pages/Orders')));
+const Order = Loader(lazy(() => import('src/pages/Order')));
+const User = Loader(lazy(() => import('src/pages/User/List')));
+const OrderRecorderPage = Loader(
+  lazy(() => import('src/pages/OrderRecorderPage'))
 );
-const Transactions = Loader(
-  lazy(() => import('src/content/applications/Transactions'))
+const ShippingRecorder = Loader(
+  lazy(() => import('src/pages/ShippingRecorder'))
 );
-const UserProfile = Loader(
-  lazy(() => import('src/content/applications/Users/profile'))
-);
-const UserSettings = Loader(
-  lazy(() => import('src/content/applications/Users/settings'))
-);
-
-// Components
-
-const Buttons = Loader(
-  lazy(() => import('src/content/pages/Components/Buttons'))
-);
-const Modals = Loader(
-  lazy(() => import('src/content/pages/Components/Modals'))
-);
-const Accordions = Loader(
-  lazy(() => import('src/content/pages/Components/Accordions'))
-);
-const Tabs = Loader(lazy(() => import('src/content/pages/Components/Tabs')));
-const Badges = Loader(
-  lazy(() => import('src/content/pages/Components/Badges'))
-);
-const Tooltips = Loader(
-  lazy(() => import('src/content/pages/Components/Tooltips'))
-);
-const Avatars = Loader(
-  lazy(() => import('src/content/pages/Components/Avatars'))
-);
-const Cards = Loader(lazy(() => import('src/content/pages/Components/Cards')));
-const Forms = Loader(lazy(() => import('src/content/pages/Components/Forms')));
 
 // Status
 
-const Status404 = Loader(
-  lazy(() => import('src/content/pages/Status/Status404'))
-);
-const Status500 = Loader(
-  lazy(() => import('src/content/pages/Status/Status500'))
-);
+const Status404 = Loader(lazy(() => import('src/pages/Status/Status404')));
+const Status500 = Loader(lazy(() => import('src/pages/Status/Status500')));
 const StatusComingSoon = Loader(
-  lazy(() => import('src/content/pages/Status/ComingSoon'))
+  lazy(() => import('src/pages/Status/ComingSoon'))
 );
 const StatusMaintenance = Loader(
-  lazy(() => import('src/content/pages/Status/Maintenance'))
+  lazy(() => import('src/pages/Status/Maintenance'))
 );
 
 const routes: RouteObject[] = [
   {
     path: '',
-    element: <BaseLayout />,
+    element: (
+      <ProtectedRoute roles={['admin', 'grosser']}>
+        <SidebarLayout />
+      </ProtectedRoute>
+    ),
     children: [
       {
         path: '/',
-        element: <Overview />
+        element: (
+          <ProtectedRoute roles={['admin', 'grosser']}>
+            <Home />
+          </ProtectedRoute>
+        )
       },
       {
-        path: 'overview',
-        element: <Navigate to="/" replace />
+        path: 'perfil',
+        element: (
+          <ProtectedRoute roles={['admin', 'grosser']}>
+            <UserProfile />
+          </ProtectedRoute>
+        )
       },
+      {
+        path: 'configuraciones',
+        element: (
+          <ProtectedRoute roles={['admin', 'grosser']}>
+            <UserSettings />
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: 'notas-de-venta',
+        element: (
+          <ProtectedRoute roles={['admin', 'grosser']}>
+            <Orders />
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: 'notas-de-venta/:numberDocument',
+        element: (
+          <ProtectedRoute roles={['admin', 'grosser']}>
+            <Order />
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: 'notas-de-venta-registradas',
+        element: (
+          <ProtectedRoute roles={['admin', 'grosser']}>
+            <OrderRecorderPage />
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: 'envios',
+        element: (
+          <ProtectedRoute roles={['admin', 'grosser']}>
+            <ShippingRecorder />
+          </ProtectedRoute>
+        )
+      },
+      ,
+      {
+        path: 'usuarios',
+        element: (
+          <ProtectedRoute roles={['admin']}>
+            <User />
+          </ProtectedRoute>
+        )
+      }
+    ]
+  },
+  {
+    path: 'login',
+    element: <Login />
+  },
+  {
+    path: '',
+    element: <BaseLayout />,
+    children: [
       {
         path: 'status',
         children: [
@@ -117,101 +153,6 @@ const routes: RouteObject[] = [
       {
         path: '*',
         element: <Status404 />
-      }
-    ]
-  },
-  {
-    path: 'dashboards',
-    element: <SidebarLayout />,
-    children: [
-      {
-        path: '',
-        element: <Navigate to="crypto" replace />
-      },
-      {
-        path: 'crypto',
-        element: <Crypto />
-      },
-      {
-        path: 'messenger',
-        element: <Messenger />
-      }
-    ]
-  },
-  {
-    path: 'management',
-    element: <SidebarLayout />,
-    children: [
-      {
-        path: '',
-        element: <Navigate to="transactions" replace />
-      },
-      {
-        path: 'transactions',
-        element: <Transactions />
-      },
-      {
-        path: 'profile',
-        children: [
-          {
-            path: '',
-            element: <Navigate to="details" replace />
-          },
-          {
-            path: 'details',
-            element: <UserProfile />
-          },
-          {
-            path: 'settings',
-            element: <UserSettings />
-          }
-        ]
-      }
-    ]
-  },
-  {
-    path: '/components',
-    element: <SidebarLayout />,
-    children: [
-      {
-        path: '',
-        element: <Navigate to="buttons" replace />
-      },
-      {
-        path: 'buttons',
-        element: <Buttons />
-      },
-      {
-        path: 'modals',
-        element: <Modals />
-      },
-      {
-        path: 'accordions',
-        element: <Accordions />
-      },
-      {
-        path: 'tabs',
-        element: <Tabs />
-      },
-      {
-        path: 'badges',
-        element: <Badges />
-      },
-      {
-        path: 'tooltips',
-        element: <Tooltips />
-      },
-      {
-        path: 'avatars',
-        element: <Avatars />
-      },
-      {
-        path: 'cards',
-        element: <Cards />
-      },
-      {
-        path: 'forms',
-        element: <Forms />
       }
     ]
   }
